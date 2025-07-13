@@ -19,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -56,10 +57,13 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public List<AccountResponse> findAllAccounts() {
+        List<AccountResponse> accounts = accountRepository
+                .findAccountsByIsDeletedFalse()
+                .stream()
+                .map(accountMapper::fromAccountToAccountResponse)
+                .toList();
 
-        List<AccountResponse> accounts = accountRepository.findAccountsByIsDeletedFalse();
-
-        if  (accounts.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found");
+        if (accounts.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found");
 
         return accounts;
     }
@@ -67,7 +71,11 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountResponse findAccountByActNo(String actNo) {
 
-        return accountRepository.findAccountByActNo(actNo)
+        return accountRepository
+                .findAccountByActNo(actNo)
+                .stream()
+                .map(accountMapper::fromAccountToAccountResponse)
+                .findFirst()
                 .orElseThrow(
                     () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found")
                 );
@@ -77,7 +85,11 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public List<AccountResponse> findAllAccountsByCustomerPhoneNumber(String phoneNumber) {
 
-        List<AccountResponse> accountResponses = accountRepository.findAccountsByCustomerPhoneNumber(phoneNumber);
+        List<AccountResponse> accountResponses = accountRepository
+                .findAccountsByCustomerPhoneNumber(phoneNumber)
+                .stream()
+                .map(accountMapper::fromAccountToAccountResponse)
+                .toList();
 
         if (accountResponses.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found");
 
@@ -93,8 +105,17 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountResponse updateAccount(UpdateAccountRequest updateAccountRequest) {
-        return null;
+    public AccountResponse updateAccount(String actNo, UpdateAccountRequest updateAccountRequest) {
+        Account account = accountRepository
+                .findAccountByActNo(actNo)
+                .orElseThrow(
+                    () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found")
+                );
+        accountMapper.toAccountPartially(updateAccountRequest, account);
+
+        account = accountRepository.save(account);
+
+        return accountMapper.fromAccountToAccountResponse(account);
     }
 
     @Override

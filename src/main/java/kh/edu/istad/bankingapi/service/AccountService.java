@@ -1,6 +1,5 @@
 package kh.edu.istad.bankingapi.service;
 
-import kh.edu.istad.bankingapi.domain.Customer;
 import kh.edu.istad.bankingapi.dto.account.request.CreateAccountRequest;
 import kh.edu.istad.bankingapi.dto.account.request.UpdateAccountRequest;
 import kh.edu.istad.bankingapi.dto.account.response.AccountResponse;
@@ -19,7 +18,7 @@ public interface AccountService {
 
     void deleteAccountByActNo(String actNo);
 
-    AccountResponse updateAccount(UpdateAccountRequest updateAccountRequest);
+    AccountResponse updateAccount(String actNo, UpdateAccountRequest updateAccountRequest);
 
     void disableAccountByActNo(String actNo);
 

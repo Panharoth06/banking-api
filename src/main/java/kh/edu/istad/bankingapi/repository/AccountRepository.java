@@ -10,9 +10,9 @@ import java.util.Optional;
 public interface AccountRepository extends JpaRepository<Account, Integer> {
     boolean existsByActNo(String actNo);
 
-    Optional<AccountResponse> findAccountByActNo(String actNo);
+    Optional<Account> findAccountByActNo(String actNo);
 
-    List<AccountResponse> findAccountsByCustomerPhoneNumber(String customerPhoneNumber);
+    List<Account> findAccountsByCustomerPhoneNumber(String customerPhoneNumber);
 
-    List<AccountResponse> findAccountsByIsDeletedFalse();
+    List<Account> findAccountsByIsDeletedFalse();
 }

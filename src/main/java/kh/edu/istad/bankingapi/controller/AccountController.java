@@ -2,6 +2,7 @@ package kh.edu.istad.bankingapi.controller;
 
 import jakarta.validation.Valid;
 import kh.edu.istad.bankingapi.dto.account.request.CreateAccountRequest;
+import kh.edu.istad.bankingapi.dto.account.request.UpdateAccountRequest;
 import kh.edu.istad.bankingapi.dto.account.response.AccountResponse;
 import kh.edu.istad.bankingapi.service.AccountService;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,11 @@ public class AccountController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteAccountByActNo(@PathVariable String actNo) {
         accountService.deleteAccountByActNo(actNo);
+    }
+
+    @PatchMapping("/{actNo}")
+    public AccountResponse updateAccountByActNo(@PathVariable String actNo, @RequestBody UpdateAccountRequest updateAccountRequest) {
+        return accountService.updateAccount(actNo, updateAccountRequest);
     }
 
 
