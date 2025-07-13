@@ -1,6 +1,5 @@
 package kh.edu.istad.bankingapi.service;
 
-import kh.edu.istad.bankingapi.domain.Account;
 import kh.edu.istad.bankingapi.domain.Customer;
 import kh.edu.istad.bankingapi.dto.account.request.CreateAccountRequest;
 import kh.edu.istad.bankingapi.dto.account.request.UpdateAccountRequest;
@@ -14,7 +13,7 @@ public interface AccountService {
 
     List<AccountResponse> findAllAccounts();
 
-    Account findAccountByActNo(String actNo);
+    AccountResponse findAccountByActNo(String actNo);
 
     List<AccountResponse> findAllAccountsByCustomer(Customer customer);
 

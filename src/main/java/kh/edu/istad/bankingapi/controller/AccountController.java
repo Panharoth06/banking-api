@@ -28,6 +28,10 @@ public class AccountController {
         return accountService.findAllAccounts();
     }
 
+    @GetMapping("/{actNo}")
+    public AccountResponse findAccountByActNo(@PathVariable String actNo) {
+        return accountService.findAccountByActNo(actNo);
+    }
 
 
 }

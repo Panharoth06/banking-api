@@ -72,8 +72,13 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account findAccountByActNo(String actNo) {
-        return null;
+    public AccountResponse findAccountByActNo(String actNo) {
+
+        return accountRepository.findAccountByActNo(actNo)
+                .orElseThrow(
+                    () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found")
+                );
+
     }
 
     @Override
