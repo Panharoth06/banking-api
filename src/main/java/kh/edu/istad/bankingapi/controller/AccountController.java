@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/accounts")
@@ -20,5 +22,12 @@ public class AccountController {
     public AccountResponse createAccount(@Valid @RequestBody CreateAccountRequest createAccountRequest) {
         return accountService.createAccount(createAccountRequest);
     }
+
+    @GetMapping
+    public List<AccountResponse> findAllAccounts() {
+        return accountService.findAllAccounts();
+    }
+
+
 
 }
