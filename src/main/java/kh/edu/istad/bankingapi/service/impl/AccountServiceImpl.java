@@ -19,7 +19,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -120,6 +119,11 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void disableAccountByActNo(String actNo) {
+
+        Account account  = accountRepository.findAccountByActNo(actNo).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found")
+        );
+        account.setIsDeleted(true);
 
     }
 

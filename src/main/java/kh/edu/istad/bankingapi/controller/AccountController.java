@@ -6,7 +6,9 @@ import kh.edu.istad.bankingapi.dto.account.request.UpdateAccountRequest;
 import kh.edu.istad.bankingapi.dto.account.response.AccountResponse;
 import kh.edu.istad.bankingapi.service.AccountService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.Repository;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -50,5 +52,10 @@ public class AccountController {
         return accountService.updateAccount(actNo, updateAccountRequest);
     }
 
+    @PutMapping("/{actNo}")
+    public ResponseEntity<?> disableAccountByAct(@PathVariable String actNo) {
+        accountService.disableAccountByActNo(actNo);
+        return ResponseEntity.status(HttpStatus.OK).body("Account disabled successfully");
+    }
 
 }
