@@ -14,13 +14,11 @@ import kh.edu.istad.bankingapi.service.AccountService;
 import kh.edu.istad.bankingapi.utils.Utility;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -88,6 +86,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void deleteAccountByActNo(String actNo) {
+
+        if (! accountRepository.findAll().removeIf(account -> account.getActNo().equals(actNo)))
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found");
 
     }
 

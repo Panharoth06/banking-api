@@ -38,5 +38,11 @@ public class AccountController {
         return accountService.findAllAccountsByCustomerPhoneNumber(phoneNumber);
     }
 
+    @DeleteMapping("/{actNo}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteAccountByActNo(@PathVariable String actNo) {
+        accountService.deleteAccountByActNo(actNo);
+    }
+
 
 }
