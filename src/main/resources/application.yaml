@@ -1,0 +1,25 @@
+spring:
+  application:
+    name:
+      banking-api
+  threads:
+    virtual:
+      enabled: true
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/aft_mobile_banking
+    password: qwer
+    username: postgres
+    driver-class-name: org.postgresql.Driver
+
+#  configure JPA Hibernate DDL
+#  DDL = Data Definition Language
+#  CREATE, ALTER, RENAME, ...
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
