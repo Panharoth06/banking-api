@@ -62,7 +62,8 @@ public class AccountServiceImpl implements AccountService {
                 .map(accountMapper::fromAccountToAccountResponse)
                 .toList();
 
-        if (accounts.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found");
+        if (accounts.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found");
 
         return accounts;
     }
@@ -75,9 +76,7 @@ public class AccountServiceImpl implements AccountService {
                 .stream()
                 .map(accountMapper::fromAccountToAccountResponse)
                 .findFirst()
-                .orElseThrow(
-                    () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found")
-                );
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
 
     }
 
@@ -90,40 +89,44 @@ public class AccountServiceImpl implements AccountService {
                 .map(accountMapper::fromAccountToAccountResponse)
                 .toList();
 
-        if (accountResponses.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found");
+        if (accountResponses.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found");
 
         return accountResponses;
     }
 
     @Override
     public void deleteAccountByActNo(String actNo) {
+        Account account = accountRepository
+                .findAccountByActNo(actNo)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
 
-        if (! accountRepository.findAll().removeIf(account -> account.getActNo().equals(actNo)))
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found");
-
+        accountRepository.delete(account);
     }
+
 
     @Override
     public AccountResponse updateAccount(String actNo, UpdateAccountRequest updateAccountRequest) {
+
         Account account = accountRepository
                 .findAccountByActNo(actNo)
-                .orElseThrow(
-                    () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found")
-                );
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
+
         accountMapper.toAccountPartially(updateAccountRequest, account);
 
         account = accountRepository.save(account);
-
         return accountMapper.fromAccountToAccountResponse(account);
     }
 
     @Override
     public void disableAccountByActNo(String actNo) {
 
-        Account account  = accountRepository.findAccountByActNo(actNo).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found")
-        );
+        Account account  = accountRepository
+                .findAccountByActNo(actNo)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
+
         account.setIsDeleted(true);
+        accountRepository.save(account);
 
     }
 

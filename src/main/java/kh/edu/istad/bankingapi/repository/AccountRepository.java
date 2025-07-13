@@ -1,7 +1,6 @@
 package kh.edu.istad.bankingapi.repository;
 
 import kh.edu.istad.bankingapi.domain.Account;
-import kh.edu.istad.bankingapi.dto.account.response.AccountResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
