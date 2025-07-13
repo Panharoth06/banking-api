@@ -33,5 +33,10 @@ public class AccountController {
         return accountService.findAccountByActNo(actNo);
     }
 
+    @GetMapping("/{phoneNumber}")
+    public List<AccountResponse>  findAccountsByCustomerPhoneNumber(@PathVariable String phoneNumber) {
+        return accountService.findAllAccountsByCustomerPhoneNumber(phoneNumber);
+    }
+
 
 }

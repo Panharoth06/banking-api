@@ -59,12 +59,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public List<AccountResponse> findAllAccounts() {
 
-        List<AccountResponse> accounts = accountRepository
-                .findAll()
-                .stream()
-                .filter(account -> account.getIsDeleted().equals(false))
-                .map(accountMapper::fromAccountToAccountResponse)
-                .toList();
+        List<AccountResponse> accounts = accountRepository.findAccountsByIsDeletedFalse();
 
         if  (accounts.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found");
 
@@ -82,8 +77,13 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public List<AccountResponse> findAllAccountsByCustomer(Customer customer) {
-        return List.of();
+    public List<AccountResponse> findAllAccountsByCustomerPhoneNumber(String phoneNumber) {
+
+        List<AccountResponse> accountResponses = accountRepository.findAccountsByCustomerPhoneNumber(phoneNumber);
+
+        if (accountResponses.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found");
+
+        return accountResponses;
     }
 
     @Override

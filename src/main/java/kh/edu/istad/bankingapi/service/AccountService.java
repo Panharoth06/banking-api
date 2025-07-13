@@ -15,7 +15,7 @@ public interface AccountService {
 
     AccountResponse findAccountByActNo(String actNo);
 
-    List<AccountResponse> findAllAccountsByCustomer(Customer customer);
+    List<AccountResponse> findAllAccountsByCustomerPhoneNumber(String phoneNumber);
 
     void deleteAccountByActNo(String actNo);
 
