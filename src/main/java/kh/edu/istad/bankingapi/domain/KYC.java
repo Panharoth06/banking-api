@@ -23,6 +23,7 @@ public class KYC {
     @Column(nullable = false)
     private Boolean isDeleted;
 
-    @OneToOne
-    private Account account;
+    @OneToOne(optional = false)
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
 }

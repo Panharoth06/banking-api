@@ -38,7 +38,4 @@ public class Account {
     @JoinColumn(name = "acc_type", nullable = false)
     private AccountType accountType;
 
-    @OneToOne(mappedBy = "account")
-    private KYC kyc;
-
 }

@@ -30,4 +30,6 @@ public interface CustomerService {
      * @return updated customer - return type {@code CustomerResponse}
      */
     CustomerResponse updateByPhoneNumber(String phoneNumber, UpdateCustomerRequest updateCustomerRequest);
+
+    void disableAccountByPhoneNumber(String phoneNumber);
 }

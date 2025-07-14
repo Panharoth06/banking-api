@@ -6,6 +6,7 @@ import kh.edu.istad.bankingapi.dto.customer.UpdateCustomerRequest;
 import kh.edu.istad.bankingapi.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,5 +37,13 @@ public class CustomerController {
     @PatchMapping("/{phoneNumber}")
     public CustomerResponse updateCustomerByPhoneNumber(@PathVariable String phoneNumber, @RequestBody UpdateCustomerRequest updateCustomerRequest) {
         return customerService.updateByPhoneNumber(phoneNumber, updateCustomerRequest);
+    }
+
+    @PutMapping("/{phoneNumber}/disable")
+    public ResponseEntity<String> deleteCustomerByPhoneNumber(@PathVariable String phoneNumber) {
+
+        customerService.disableAccountByPhoneNumber(phoneNumber);
+        return ResponseEntity.ok().body("Customer has been disabled successfully");
+
     }
 }

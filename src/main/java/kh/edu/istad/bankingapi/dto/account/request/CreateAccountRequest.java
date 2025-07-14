@@ -15,9 +15,9 @@ public record CreateAccountRequest(
         @Pattern(regexp = "^[0-9]{9,12}$", message = "Phone number must contain only digits")
         String phoneNumber,
 
-        @DecimalMin(value = "5.0", message = "Over limit cannot be lower than 5")
-        @NotNull(message = "Over limit is required")
-        BigDecimal overLimit,
+//        @DecimalMin(value = "5.0", message = "Over limit cannot be lower than 5")
+//        @NotNull(message = "Over limit is required")
+//        BigDecimal overLimit,
 
         @NotBlank(message = "Account type is required")
         String accountType

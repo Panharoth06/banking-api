@@ -10,6 +10,7 @@ import kh.edu.istad.bankingapi.mapper.AccountMapper;
 import kh.edu.istad.bankingapi.repository.AccountRepository;
 import kh.edu.istad.bankingapi.repository.AccountTypeRepository;
 import kh.edu.istad.bankingapi.repository.CustomerRepository;
+import kh.edu.istad.bankingapi.repository.KYCRepository;
 import kh.edu.istad.bankingapi.service.AccountService;
 import kh.edu.istad.bankingapi.utils.Utility;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class AccountServiceImpl implements AccountService {
     private final CustomerRepository customerRepository;
     private final Utility utility;
     private final AccountTypeRepository accountTypeRepository;
+    private final KYCRepository kycRepository;
 
     @Override
     public AccountResponse createAccount(CreateAccountRequest createAccountRequest) {
@@ -36,6 +38,10 @@ public class AccountServiceImpl implements AccountService {
         Customer customer = customerRepository.findCustomerByPhoneNumber(createAccountRequest.phoneNumber()).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found")
         );
+
+        if (customer.getKyc().getIsVerified().equals(false)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
 
         AccountType accountType = accountTypeRepository.findAccountTypesByTypeIgnoreCase(createAccountRequest.accountType()).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account Type not found")
@@ -48,10 +54,12 @@ public class AccountServiceImpl implements AccountService {
         account.setAccountType(accountType);
         account.setIsDeleted(false);
         account.setBalance(BigDecimal.ZERO);
+        account.setOverLimit(customer.getCustomerSegment().getOverLimit());
         utility.generateAccountNumber(account);
 
         account = accountRepository.save(account);
         return accountMapper.fromAccountToAccountResponse(account);
+
     }
 
     @Override
@@ -66,6 +74,7 @@ public class AccountServiceImpl implements AccountService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found");
 
         return accounts;
+
     }
 
     @Override
@@ -93,6 +102,7 @@ public class AccountServiceImpl implements AccountService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found");
 
         return accountResponses;
+
     }
 
     @Override
@@ -116,6 +126,7 @@ public class AccountServiceImpl implements AccountService {
 
         account = accountRepository.save(account);
         return accountMapper.fromAccountToAccountResponse(account);
+
     }
 
     @Override
@@ -129,5 +140,8 @@ public class AccountServiceImpl implements AccountService {
         accountRepository.save(account);
 
     }
+
+
+
 
 }
