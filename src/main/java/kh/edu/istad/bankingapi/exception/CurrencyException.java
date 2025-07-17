@@ -1,6 +1,5 @@
 package kh.edu.istad.bankingapi.exception;
 
-import org.springframework.beans.NotReadablePropertyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;

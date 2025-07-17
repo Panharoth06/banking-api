@@ -1,6 +1,5 @@
 package kh.edu.istad.bankingapi.controller;
 
-import kh.edu.istad.bankingapi.domain.KYC;
 import kh.edu.istad.bankingapi.service.KYCService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

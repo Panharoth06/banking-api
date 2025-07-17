@@ -1,5 +1,6 @@
 package kh.edu.istad.bankingapi.controller;
 
+import jakarta.validation.Valid;
 import kh.edu.istad.bankingapi.dto.customer.CreateCustomerRequest;
 import kh.edu.istad.bankingapi.dto.customer.CustomerResponse;
 import kh.edu.istad.bankingapi.dto.customer.UpdateCustomerRequest;
@@ -20,7 +21,7 @@ public class CustomerController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CustomerResponse createCustomer(@RequestBody CreateCustomerRequest createCustomerRequest) {
+    public CustomerResponse createCustomer(@Valid @RequestBody CreateCustomerRequest createCustomerRequest) {
         return customerService.createNew(createCustomerRequest);
     }
 
