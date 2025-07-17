@@ -10,7 +10,6 @@ import kh.edu.istad.bankingapi.mapper.AccountMapper;
 import kh.edu.istad.bankingapi.repository.AccountRepository;
 import kh.edu.istad.bankingapi.repository.AccountTypeRepository;
 import kh.edu.istad.bankingapi.repository.CustomerRepository;
-import kh.edu.istad.bankingapi.repository.KYCRepository;
 import kh.edu.istad.bankingapi.service.AccountService;
 import kh.edu.istad.bankingapi.utils.Utility;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +29,6 @@ public class AccountServiceImpl implements AccountService {
     private final CustomerRepository customerRepository;
     private final Utility utility;
     private final AccountTypeRepository accountTypeRepository;
-    private final KYCRepository kycRepository;
 
     @Override
     public AccountResponse createAccount(CreateAccountRequest createAccountRequest) {
@@ -40,22 +38,39 @@ public class AccountServiceImpl implements AccountService {
         );
 
         if (customer.getKyc().getIsVerified().equals(false)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You must be a verified customer to create account");
         }
 
         AccountType accountType = accountTypeRepository.findAccountTypesByTypeIgnoreCase(createAccountRequest.accountType()).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account Type not found")
         );
 
-//        map
         Account account = accountMapper.fromCreateToAccount(createAccountRequest);
 
         account.setCustomer(customer);
         account.setAccountType(accountType);
         account.setIsDeleted(false);
-        account.setBalance(BigDecimal.ZERO);
-        account.setOverLimit(customer.getCustomerSegment().getOverLimit());
-        utility.generateAccountNumber(account);
+
+        if (createAccountRequest.accountNumber() == null || createAccountRequest.accountNumber().isEmpty())
+            utility.generateAccountNumber(account);
+
+        switch (createAccountRequest.currency()) {
+            case KHR -> {
+                if (createAccountRequest.balance().compareTo(BigDecimal.valueOf(40000)) < 0) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Balance must be greater than or equal to 40000 KHR");
+                }
+                account.setBalance(createAccountRequest.balance());
+                account.setOverLimit(customer.getCustomerSegment().getOverLimit().multiply(BigDecimal.valueOf(4000)));
+            }
+            case USD -> {
+                if (createAccountRequest.balance().compareTo(BigDecimal.valueOf(10)) < 0) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Balance must be greater than or equal to 10 USD");
+                }
+                account.setBalance(createAccountRequest.balance());
+                account.setOverLimit(customer.getCustomerSegment().getOverLimit());
+            }
+            default -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Currency not supported");
+        }
 
         account = accountRepository.save(account);
         return accountMapper.fromAccountToAccountResponse(account);
@@ -81,7 +96,7 @@ public class AccountServiceImpl implements AccountService {
     public AccountResponse findAccountByActNo(String actNo) {
 
         return accountRepository
-                .findAccountByActNo(actNo)
+                .findAccountByAccountNumber(actNo)
                 .stream()
                 .map(accountMapper::fromAccountToAccountResponse)
                 .findFirst()
@@ -108,7 +123,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void deleteAccountByActNo(String actNo) {
         Account account = accountRepository
-                .findAccountByActNo(actNo)
+                .findAccountByAccountNumber(actNo)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
 
         accountRepository.delete(account);
@@ -119,7 +134,7 @@ public class AccountServiceImpl implements AccountService {
     public AccountResponse updateAccount(String actNo, UpdateAccountRequest updateAccountRequest) {
 
         Account account = accountRepository
-                .findAccountByActNo(actNo)
+                .findAccountByAccountNumber(actNo)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
 
         accountMapper.toAccountPartially(updateAccountRequest, account);
@@ -133,7 +148,7 @@ public class AccountServiceImpl implements AccountService {
     public void disableAccountByActNo(String actNo) {
 
         Account account  = accountRepository
-                .findAccountByActNo(actNo)
+                .findAccountByAccountNumber(actNo)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
 
         account.setIsDeleted(true);

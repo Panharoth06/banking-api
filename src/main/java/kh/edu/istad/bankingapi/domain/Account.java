@@ -1,6 +1,7 @@
 package kh.edu.istad.bankingapi.domain;
 
 import jakarta.persistence.*;
+import kh.edu.istad.bankingapi.utils.Currency;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,14 +19,18 @@ public class Account {
     private Integer id;
 
     @Column(nullable = false)
-    private String actName;
+    private String accountName;
 
     @Column(nullable = false, unique = true)
-    private String actNo;
+    private String accountNumber;
 
+    @Column(nullable = false)
+    private Currency currency;
+
+    @Column(nullable = false)
     private BigDecimal balance;
 
-    @Column(nullable = false, precision = 5)
+    @Column(nullable = false)
     private BigDecimal overLimit;
 
     @Column(columnDefinition = "BOOLEAN DEFAULT false")

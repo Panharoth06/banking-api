@@ -17,8 +17,8 @@ public class Utility {
         String newActNo;
         do {
             newActNo = prefix + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
-        } while (accountRepository.existsByActNo((newActNo)));
-        account.setActNo(newActNo);
+        } while (accountRepository.existsByAccountNumber((newActNo)));
+        account.setAccountNumber(newActNo);
     }
 
 

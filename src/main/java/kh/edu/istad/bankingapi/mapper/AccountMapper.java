@@ -10,7 +10,7 @@ import org.mapstruct.*;
 public interface AccountMapper {
 
     @Mapping(target = "accountType", ignore = true)
-    @Mapping(target = "actName", source = "accountName")  // map accountName → actName
+//    @Mapping(target = "accountName", source = "accountName")  // map accountName → actName
     Account fromCreateToAccount(CreateAccountRequest createAccountRequest);
 
     @Mapping(target = "accountType", source = "account.accountType.type")
