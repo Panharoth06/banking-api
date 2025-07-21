@@ -33,17 +33,21 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountResponse createAccount(CreateAccountRequest createAccountRequest) {
 
-        Customer customer = customerRepository.findCustomerByPhoneNumber(createAccountRequest.phoneNumber()).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found")
-        );
+        Customer customer = customerRepository
+                .findCustomerByPhoneNumber(createAccountRequest.phoneNumber())
+                .orElseThrow(
+                    () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found")
+                );
 
-        if (customer.getKyc().getIsVerified().equals(false)) {
+        if (customer.getKyc().getIsVerified().equals(false))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You must be a verified customer to create account");
-        }
 
-        AccountType accountType = accountTypeRepository.findAccountTypesByTypeIgnoreCase(createAccountRequest.accountType()).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account Type not found")
-        );
+
+        AccountType accountType = accountTypeRepository
+                .findAccountTypesByTypeIgnoreCase(createAccountRequest.accountType())
+                .orElseThrow(
+                    () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account Type not found")
+                );
 
         Account account = accountMapper.fromCreateToAccount(createAccountRequest);
 
@@ -56,16 +60,16 @@ public class AccountServiceImpl implements AccountService {
 
         switch (createAccountRequest.currency()) {
             case KHR -> {
-                if (createAccountRequest.balance().compareTo(BigDecimal.valueOf(40000)) < 0) {
+                if (createAccountRequest.balance().compareTo(BigDecimal.valueOf(40000)) < 0)
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Balance must be greater than or equal to 40000 KHR");
-                }
+
                 account.setBalance(createAccountRequest.balance());
                 account.setOverLimit(customer.getCustomerSegment().getOverLimit().multiply(BigDecimal.valueOf(4000)));
             }
             case USD -> {
-                if (createAccountRequest.balance().compareTo(BigDecimal.valueOf(10)) < 0) {
+                if (createAccountRequest.balance().compareTo(BigDecimal.valueOf(10)) < 0)
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Balance must be greater than or equal to 10 USD");
-                }
+
                 account.setBalance(createAccountRequest.balance());
                 account.setOverLimit(customer.getCustomerSegment().getOverLimit());
             }

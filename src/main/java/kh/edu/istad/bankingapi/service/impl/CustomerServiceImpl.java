@@ -31,13 +31,13 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerResponse createNew(CreateCustomerRequest createCustomerRequest) {
 
-        if (customerRepository.existsByEmail(createCustomerRequest.email())) {
+        if (customerRepository.existsByEmail(createCustomerRequest.email()))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
-        }
 
-        if (customerRepository.existsByPhoneNumber(createCustomerRequest.phoneNumber())) {
+
+        if (customerRepository.existsByPhoneNumber(createCustomerRequest.phoneNumber()))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Phone number already exists");
-        }
+
 
         CustomerSegment customerSegment = customerSegmentRepository
                 .getCustomerSegmentBySegmentName(createCustomerRequest.segmentName())
@@ -48,7 +48,7 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setCustomerSegment(customerSegment);
 
         customer = customerRepository.save(customer);
-        customerRepository.flush();
+//        customerRepository.flush();
 
 
         if (!kycRepository.existsByNationalCardId(createCustomerRequest.nationCardId())) {
@@ -64,6 +64,7 @@ public class CustomerServiceImpl implements CustomerService {
         } else {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "National card already exists");
         }
+
     }
 
 

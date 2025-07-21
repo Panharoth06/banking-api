@@ -2,9 +2,16 @@ spring:
   application:
     name:
       banking-api
+
   threads:
     virtual:
       enabled: true
+
+#  security:
+#    user:
+#      name: toilet-cleaner
+#      password: 123
+
 
   datasource:
     url: jdbc:postgresql://localhost:5432/aft_mobile_banking
