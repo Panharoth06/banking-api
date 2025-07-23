@@ -10,11 +10,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -26,35 +23,6 @@ public class SecurityConfig {
 
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsService userDetailsService;
-//    @Bean
-//    InMemoryUserDetailsManager  userDetailsManager() {
-//
-//        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-//
-//        UserDetails admin = User.builder()
-//                .username("admin")
-//                .password(passwordEncoder.encode("admin123"))
-//                .roles("ADMIN", "CUSTOMER")
-//                .build();
-//
-//        UserDetails editor = User.builder()
-//                .username("editor")
-//                .password(passwordEncoder.encode("editor123"))
-//                .roles("EDITOR", "CUSTOMER")
-//                .build();
-//
-//        UserDetails customer = User.builder()
-//                .roles("CUSTOMER")
-//                .username("customer")
-//                .password(passwordEncoder.encode("customer123"))
-//                .build();
-//
-//        manager.createUser(admin);
-//        manager.createUser(editor);
-//        manager.createUser(customer);
-//
-//        return manager;
-//    }
 
     @Bean
     DaoAuthenticationProvider  daoAuthenticationProvider() {
@@ -74,7 +42,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE ,"/api/v1/customers/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT ,"/api/v1/customers/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH ,"/api/v1/customers/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET ,"/api/v1/customers/**").hasAnyRole("ADMIN", "EDITOR")
+                        .requestMatchers(HttpMethod.GET ,"/api/v1/customers/**").hasAnyRole("ADMIN", "STAFF")
+                        .requestMatchers(HttpMethod.POST ,"/api/v1/accounts/**").hasRole("USER")
                         .anyRequest()
                         .authenticated());
 
