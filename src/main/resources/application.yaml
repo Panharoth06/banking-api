@@ -3,7 +3,6 @@ spring:
     name:
       banking-api
 
-
   security:
     oauth2:
       resource server:
