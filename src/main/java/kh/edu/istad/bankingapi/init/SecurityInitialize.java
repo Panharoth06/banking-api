@@ -21,7 +21,7 @@ public class SecurityInitialize {
     @PostConstruct
     public void init() {
 
-        if (userRepository.count() == 0 &&  roleRepository.count() == 0) {
+        if (userRepository.count() == 0 && roleRepository.count() == 0) {
             Role userRole = new  Role();
             userRole.setName("USER");
 
