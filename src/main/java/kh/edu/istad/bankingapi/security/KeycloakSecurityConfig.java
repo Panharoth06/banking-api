@@ -3,35 +3,45 @@ package kh.edu.istad.bankingapi.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
+
+import java.util.Collection;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig {
-
-    private final PasswordEncoder passwordEncoder;
-    private final UserDetailsService userDetailsService;
+public class KeycloakSecurityConfig {
 
     @Bean
-    DaoAuthenticationProvider  daoAuthenticationProvider() {
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        Converter<Jwt, Collection<GrantedAuthority>> jwtConverter = jwt -> {
+            Map<String, Collection<String>> realmAccess = jwt.getClaim("realm_access");
+            Collection<String> roles = realmAccess.get("roles");
+            return roles.stream()
+                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                        .collect(Collectors.toList());
+        };
 
-        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider(userDetailsService);
-        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
-
-        return daoAuthenticationProvider;
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtConverter);
+        return jwtAuthenticationConverter;
     }
+
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -50,7 +60,8 @@ public class SecurityConfig {
 //        disable form login
         http.formLogin(FormLoginConfigurer::disable);
 
-        http.httpBasic(withDefaults());
+        http.oauth2ResourceServer(oauth2ResourceServerConfigurer ->
+                oauth2ResourceServerConfigurer.jwt(withDefaults()));
 
 //        disable CSRF
         http.csrf(AbstractHttpConfigurer::disable);

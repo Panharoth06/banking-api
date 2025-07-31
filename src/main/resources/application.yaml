@@ -3,6 +3,14 @@ spring:
     name:
       banking-api
 
+
+  security:
+    oauth2:
+      resource server:
+        jwt:
+          issuer-uri:
+            http://localhost:8080/realms/aft-mb-api
+
   threads:
     virtual:
       enabled: true
@@ -30,3 +38,5 @@ spring:
     properties:
       hibernate:
         format_sql: true
+server:
+  port: 8081
