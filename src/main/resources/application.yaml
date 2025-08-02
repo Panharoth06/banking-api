@@ -39,3 +39,14 @@ spring:
         format_sql: true
 server:
   port: 8081
+
+
+media:
+  server-path: /home/panha/Pictures/media/
+  base-uri: http://localhost:8081/media/
+
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
